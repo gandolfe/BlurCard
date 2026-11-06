@@ -96,11 +96,11 @@ fun DraggableGlassCard(
                 shape = RoundedCornerShape(24.dp)
             )
     ) {
-        // 毛玻璃层：把背景图层平移到卡片位置重绘，并整体模糊
+        // 毛玻璃层：把背景图层平移到卡片位置重绘，并对卡片显示区域模糊
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .graphicsLayer {
+                .graphicsLayer {   //使用独立渲染层，使用GPU做特效变换
                     renderEffect = BlurEffect(
                         radiusX = 25.dp.toPx(),
                         radiusY = 25.dp.toPx()
@@ -111,7 +111,7 @@ fun DraggableGlassCard(
                         backgroundPosition.x - cardPosition.x,
                         backgroundPosition.y - cardPosition.y
                     ) {
-                        drawLayer(backgroundLayer)
+                        drawLayer(backgroundLayer)  //真正绘制底图
                     }
                 }
                 .background(Color.White.copy(alpha = 0.15f))
