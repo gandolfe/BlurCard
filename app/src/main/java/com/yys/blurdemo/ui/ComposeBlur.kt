@@ -1,8 +1,16 @@
 package com.yys.blurdemo.ui
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +34,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ExperimentalGraphicsApi
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
@@ -35,10 +44,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import com.yys.blurdemo.R
+import java.lang.Exception
+import java.net.URI
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalGraphicsApi::class)
@@ -47,10 +60,25 @@ fun ComposeBlur(modifier: Modifier = Modifier) {
     // 背景的离屏图层：卡片用它"镜像"重绘身后的内容
     val backgroundLayer = rememberGraphicsLayer()
     var backgroundPosition by remember { mutableStateOf(Offset.Zero) }
+    
+    var selectImageUri by remember { mutableStateOf<Uri?>(null) }
+    
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectImageUri = uri
+    }
+    
+    val context = LocalContext.current
 
     Box(modifier = modifier.fillMaxSize()) {
+        
+        val selectBitmap = remember(selectImageUri) {
+           loadUriImage(selectImageUri, context)
+        }
+        
         Image(
-            painter = painterResource(id = R.drawable.festival_qingming),
+            bitmap = selectBitmap.asImageBitmap(),
             contentDescription = "背景",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -60,11 +88,41 @@ fun ComposeBlur(modifier: Modifier = Modifier) {
                     backgroundLayer.record { this@drawWithContent.drawContent() } //把背景图绘制到离屏缓存中
                     drawContent()  //绘制自己本身到屏幕上
                 }
+                .clickable(true){
+                    launcher.launch("image/*")
+                }
+                
+            
         )
 
         DraggableGlassCard(backgroundLayer, backgroundPosition)
     }
 }
+
+
+
+
+
+fun loadUriImage(uri: Uri?, context: Context) : Bitmap{
+    var bitmap: Bitmap? = null
+    bitmap = uri?.let {uri -> 
+        try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            null
+        }
+    }
+    if (bitmap == null) {
+        Log.w("ComposeBlur", "load bitmap is null, load default bitmap")
+        bitmap = BitmapFactory.decodeResource(context.resources,R.drawable.festival_qingming)
+    }
+    return bitmap
+}
+
+
 
 @OptIn(ExperimentalGraphicsApi::class)
 @Composable
