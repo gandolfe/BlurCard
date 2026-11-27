@@ -1,16 +1,8 @@
 package com.yys.blurdemo
 
-import android.app.Instrumentation
-import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.RelativeLayout
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.yys.blurdemo.gles.BlurView
 
 class GlesActivity : AppCompatActivity() {

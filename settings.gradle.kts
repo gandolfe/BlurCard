@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "blurDemo"
 include(":app")
+include(":blurgles")
  
