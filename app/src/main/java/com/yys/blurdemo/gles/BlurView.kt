@@ -23,7 +23,7 @@ class BlurView @JvmOverloads constructor(
     
     val SCALE_SAMPLE = 5
     
-    val processor: GlGaussianBlurProcessor = GlGaussianBlurProcessor(radius = 10, sampleFactor = 1.0f)
+    val processor: GlGaussianBlurProcessor = GlGaussianBlurProcessor(radius = 5, sampleFactor = 1.0f)
     
     var bluredView : View? = null
     
