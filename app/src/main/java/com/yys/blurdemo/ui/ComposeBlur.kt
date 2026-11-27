@@ -165,7 +165,9 @@ fun DraggableGlassCard(
                     )
                 }
                 .drawBehind {
+                    Log.i("ComposeBlur", "backgroundPosition.x:${backgroundPosition.x} , cardPosition.x:${cardPosition.x}")
                     translate(  //让底层的背景图，反向移动，让绘制的位置和卡片框所处的全局位置一致
+                        
                         backgroundPosition.x - cardPosition.x,
                         backgroundPosition.y - cardPosition.y
                     ) {

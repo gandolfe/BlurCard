@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BlurDemo">
         <activity
+            android:name=".GlesActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
